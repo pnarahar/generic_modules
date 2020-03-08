@@ -7,8 +7,9 @@ Place holder for developing generic parameterized modules:
 2)Free register list.
 3)n:1 n bit mux. Also realize this using only 2:1 mux
 4)divide by 2^n counter.
-5)power of 2 byte memory.
+5)power of 2 byte memory.(Prefetch Buffer)
 6)Pulse extender.
 7)Round robin Arbiter.
 8)Sync FIFO.
 9)Async FIFO.
+10)Register File.
