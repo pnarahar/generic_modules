@@ -2,8 +2,8 @@
 //Author - Pradeep Naraharirao
 
 module sync_fifo
-    #(DSIZE = 1,
-      ASIZE = 1)
+    #(parameter DSIZE = 1,
+      parameter ASIZE = 1)
     (
      input  logic [DSIZE-1:0]  din,
      input  logic              wr_en,
