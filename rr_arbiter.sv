@@ -5,7 +5,7 @@ input  logic [NUM_REQ-1:0] req,
 output logic [NUM_REQ-1:0] gnt 
 );
 logic [NUM_REQ-1:0] higher_prior_req;
-assign gnt[N-1:0] = req[N-1:0] & (~higher_prior_req[N-1:0]);
+assign gnt[NUM_REQ-1:0] = req[NUM_REQ-1:0] & (~higher_prior_req[NUM_REQ-1:0]);
 genvar i;
    generate
        for(i=0;i<NUM_REQ;i++) begin
@@ -22,16 +22,16 @@ endmodule
 module rr_arbiter
    #(parameter NUM_REQ=10)
   (    
-      input logic [NUM_REQ-1:0]  req,
+      input  logic [NUM_REQ-1:0] req,
       output logic [NUM_REQ-1:0] gnt,
       input  logic               clk,
       input  logic               rst_b 
   )
 
  logic [2*NUM_REQ-1:0] rot_req,rot_gnt_one_hot;
- logic [NUM_REQ-1:0]   rot_gnt_one_hot;
- logic [$clog2(NUM_REQ)-1:0] 
+ logic [$clog2(NUM_REQ)-1:0] gnt_enc; 
 
+ //Add a mux here to hold the current requestor priority intact. The current requestor would still win the arbitration
  assign rot_req = {req,req} >> (curr_gnt+1);
   
  //Fixed Priority resolver
@@ -39,14 +39,15 @@ module rr_arbiter
  fixed_prioritizer
    (
      .NUM_REQ(NUM_REQ)
-   )
+   ) fixed_prioritizer_u
    (
      .req(rot_req[NUM_REQ-1:0]),
      .gnt(gnt_one_hot[NUM_REQ-1:0])
    );
 //Rerotate
 
- assign gnt = {gnt_one_hot,gnt_one_hot} << (curr_gnt+1);
+ assign rot_gnt_one_hot = {gnt_one_hot,gnt_one_hot} << (curr_gnt+1);
+ assign gnt = rot_gnt_one_hot[2*NUM_REQ-1:NUM_REQ];
 
 //Register the current gnt number in encoded format
 

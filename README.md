@@ -12,5 +12,6 @@ Place holder for developing generic parameterized modules:
 7)Round robin Arbiter.
 8)Sync FIFO.
 9)Async FIFO.
+10)Special synchronizers
 10)Register File.
 11)Re order Buffer.

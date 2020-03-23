@@ -12,3 +12,6 @@ module sync_fifo
      input  logic              clk
      );
 
+
+endmodule
+
