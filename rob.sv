@@ -92,7 +92,7 @@ always@(posedge clk or negedge rst_b)  begin
                    prev_phy_addr[wr_ptr] <= dis_prev_phy_addr;
                    curr_phy_addr[wr_ptr] <= dis_new_phy_addr;   
 	     end else begin	
-                   CurrPhyArray[wr_ptr]  <= dis_sw_rt_phy_addr;
+                   curr_phy_addr[wr_ptr]  <= dis_sw_rt_phy_addr;
              end	
          end
          if(cdb_val) begin
