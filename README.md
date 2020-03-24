@@ -13,5 +13,5 @@ Place holder for developing generic parameterized modules:
 8)Sync FIFO.
 9)Async FIFO.
 10)Special synchronizers
-10)Register File.
-11)Re order Buffer.
+11)Register File.
+12)Re order Buffer.
