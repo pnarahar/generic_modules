@@ -45,7 +45,7 @@ logic [31:0]        reg_wr,mem_wr,complete;
 logic [31:0] [20:0] sw_addr;
 logic [5:0]         wr_ptr,rd_ptr,internal_depth,fcnt;
 logic               full,empty;
-assign full  = ((wr_ptr ^ rd_ptr)==6'b10000);
+assign full  = ((wr_ptr ^ rd_ptr)==6'b100000);
 assign empty = &(wr_ptr ~^ rd_ptr);
 assign rob_rdptr = rd_ptr;
 assign rob_wrptr = wr_ptr;
@@ -81,7 +81,7 @@ always@(posedge clk or negedge rst_b)  begin
     end else begin
          if(rob_commit) begin
              rd_ptr            <=rd_ptr+1;
-             complete[rd_ptr]  <= 1'b1; 
+             complete[rd_ptr]  <= 1'b0; 
          end
          if(dis_inst_valid & (~full | (full & commit))) begin
              reg_wr[wr_ptr] <= dis_reg_write;
@@ -105,7 +105,7 @@ always@(posedge clk or negedge rst_b)  begin
          end
          if(cdb_flush) begin
               if(internal_depth < 0) begin
-                   wr_ptr <= internal_depth + rd_ptr + {1'b1,4'b0};//Modulo 32 subtraction
+                   wr_ptr <= internal_depth + rd_ptr + {1'b1,5'b0};//Modulo 32 subtraction
               end
               else begin
                    wr_ptr <= internal_depth + rd_ptr;
