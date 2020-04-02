@@ -11,13 +11,19 @@ module nbit_sr
 
 logic [DSIZE-1:0] stg [0:DLY-1];
 
-always@(posedge clk or negedge rst_b) begin
-  if(SH_R == 1) 
-    stg<=(~rst_b)?'0:{din,stg[DLY-1:1]};
-  else
-    stg<=(~rst_b)?'0:{stg[DLY-1:1],din};
-end
-assign dout=stg[DLY-1];
+
+if(SH_R == 1)
+ always@(posedge clk or negedge rst_b) 
+  stg<=(~rst_b)?'0:{din,stg[DLY-1:1]};
+else
+ always@(posedge clk or negedge rst_b) begin
+  stg<=(~rst_b)?'0:{stg[DLY-2:0],din};
+
+
+if(SH_R ==1)
+  assign dout=stg[0];
+else
+  assign dout=stg[DLY-1];
 
 endmodule
 
