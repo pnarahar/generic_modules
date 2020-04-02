@@ -8,7 +8,7 @@ module nto1_mbit_mux
    input  logic [$clog2(N)-1:0] sel
 )
   logic [M-1:0] unpacked_out [0:N-1];
-  assign out=unpacked_out[N-1];
+  assign out=unpacked_out[sel];
   generate
       for(i=0;i<N;i++) begin
            unpacked_out[i] = in[(((i+1)*M)-1):i*M];
