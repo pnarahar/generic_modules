@@ -2,22 +2,28 @@
 //The beauty of this design is that it is scalable.
 //This is a very intuitive code for a hardware Engineer, This applies 2 important concepts of software engineering: Divide and Conquer(Binary Tree approach) && Recursion(recursion in Hardware??? Are you kidding?)
 //Recursive compilation is not supported in cadence genus 19.12
-//This is a very intuitive code for a hardware Engineer, This applies 2 important concepts of software engineering: Divide and Conquer && Recursion(recursion in Hardware??? Are you kidding?)
-module leading_zero_cnt #(
-  parameter WI_SZ=32,
-  parameter WO_SZ=$clog2(WI_SZ)+1
-)(
+package clz_clo_pkg;
+  localparam WI_SZ=32;
+  localparam WO_SZ=$clog2(WI_SZ)+1;
+  `define IMPL "RECURSE" 
+endpackage
+
+
+module clz_clo 
+import clz_clo_pkg::*;
+(
   input      [WI_SZ-1:0] in,
   output reg [WO_SZ-1:0] out
 );
-  localparam TWO_BITS = 2;
-  
-  reg [WO_SZ-1:0] lzc;
-  
-  always @(*) out = lzc;
-  
+    
   generate
     // Base Case: Get LZC from two bits.
+   if (`IMPL == "RECURSE") begin
+
+    localparam TWO_BITS = 2;
+    reg [WO_SZ-1:0] lzc;
+    always @(*) out = lzc;
+
     if (WI_SZ == TWO_BITS) begin: MUX_2BIT
       always @(*) begin
         case (in)
@@ -88,6 +94,16 @@ module leading_zero_cnt #(
      end: MUX_DECODE
      
    end: MOD_RECURSE
+   else begin
+     //Case Z based: Incomplete Implementation, 329 sq Microns in TSMC 110nm
+      always_comb  begin
+           casez(in[31:0])
+             32'b01??????_????????_????????_????????: out = 1;
+             32'b001?????_????????_????????_????????: out = 2;
+           default : out = 0;
+          endcase
+      end
+   end
     
   endgenerate
   
