@@ -1,11 +1,8 @@
 //Not an Efficient implementation both in terms of Power and Area.
 //The beauty of this design is that it is scalable.
-<<<<<<< HEAD
 //This is a very intuitive code for a hardware Engineer, This applies 2 important concepts of software engineering: Divide and Conquer(Binary Tree approach) && Recursion(recursion in Hardware??? Are you kidding?)
 //Recursive compilation is not supported in cadence genus 19.12
-=======
 //This is a very intuitive code for a hardware Engineer, This applies 2 important concepts of software engineering: Divide and Conquer && Recursion(recursion in Hardware??? Are you kidding?)
->>>>>>> d7ff12fa29163820ff4bf5ac969b34535f094ebd
 module leading_zero_cnt #(
   parameter WI_SZ=32,
   parameter WO_SZ=$clog2(WI_SZ)+1
