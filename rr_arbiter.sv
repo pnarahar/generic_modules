@@ -12,7 +12,7 @@ genvar i;
            if(i==0) 
               higher_prior_req[i] = 0;
            else
-              higher_prior_req[i]=req[i] | higher_prior_req[i-1];
+              higher_prior_req[i]=req[i-1] | higher_prior_req[i-1];
        end
    endgenerate
 endmodule
