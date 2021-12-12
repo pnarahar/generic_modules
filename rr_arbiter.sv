@@ -55,12 +55,48 @@ module rr_arbiter
     if(~rst_b) curr_gnt <= NUM_REQ-1;
     else       curr_gnt <= gnt_enc;
  end
+
+
+
+if(MUX_BASED==1) begin
+      always_comb begin
+         gnt_enc='0;
+         for(int i=0 ; i<NUM_REQ ;i++)
+            if(gnt[i]) gnt_enc = i;
+      end
+end else begin
+
+
    
-always_comb begin
-   gnt_enc='0;
-   for(int i=0 ; i<NUM_REQ ;i++)
-      if(gnt[i]) gnt_enc = i;
+//Decoded Format to Encoded Format: Mux Based
+
+//	7	6	5	4	3	2	1	0			|oh & mask
+//one	1	0	0	0	0	0	0	0			
+//Mask	1	0	1	0	1	0	1	0		[0]	1
+//Mask	1	1	0	0	1	1	0	0		[1]	1
+//Mask	1	1	1	1	0	0	0	0		[2]	1
+//											
+//											
+//one	0	1	0	0	0	0	0	0               [0]	0
+//										[1]	1
+//										[2]	1
+
+
+
+
+//Better method : building a mask for each output binary bit
+
+
+for (genvar j = 0; j < $clog2(NUM_REQ); j++) begin : jl
+        logic [NUM_REQ-1:0] tmp_mask;
+            for (genvar i = 0; i < NUM_REQ; i++) begin : il
+                logic [$clog2(NUM_REQ)-1:0] tmp_i;
+                assign tmp_i = i;
+                assign tmp_mask[i] = tmp_i[j];
+            end
+        assign gnt_enc[j] = |(tmp_mask & gnt);
 end
- 
+
+end
 
 endmodule
