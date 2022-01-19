@@ -20,13 +20,17 @@ endmodule
 
 //Algorithm for RR arbitration 
 module rr_arbiter
-   #(parameter NUM_REQ=10)
+   #(parameter NUM_REQ=10,
+     parameter IMPL_TYPE = 1)
   (    
       input  logic [NUM_REQ-1:0] req,
       output logic [NUM_REQ-1:0] gnt,
       input  logic               clk,
       input  logic               rst_b 
   )
+
+
+if(IMPL_TYPE == 0) begin
 
  logic [2*NUM_REQ-1:0] rot_req,rot_gnt_one_hot;
  logic [$clog2(NUM_REQ)-1:0] gnt_enc; 
@@ -98,5 +102,40 @@ for (genvar j = 0; j < $clog2(NUM_REQ); j++) begin : jl
 end
 
 end
+end else begin
+   
+   logic gnt_zero;
+   logic [NUM_REQ-1:0] pri,pri_req,req_eff;
 
+   assign gnt_zero = ~|gnt;
+
+
+//Determine the priorities for each requestor, Clear the priorities as and when an adjacent grant is presented.
+   for (genvar i=0 ; i<NUM_REQ; i++) begin
+              logic [NUM_REQ-1:0] tmp_i;
+//pri for gnt[0] is set if there was a grant for gnt[NUM_REQ-1] or if there was no grant in current cycle hold the priorities 
+              assign tmp_i = i[NUM_REQ-1:0];
+              always_ff(posedge clk or negedge rst_n)
+              if(!rst_n)     pri[i]       <= '1;
+              else           pri[i]       <= gnt[tmp_i-1]  | (gnt_zero & pri[i]);    
+   end
+
+   assign pri_req = pri & req ;
+ 
+//Check if masked request is 0  
+   assign req_eff = (~|pri_req) ? req : pri_req;
+
+
+    //Fixed Priority resolver
+
+ fixed_prioritizer
+   (
+     .NUM_REQ(NUM_REQ)
+   ) fixed_prioritizer_u
+   (
+     .req(req_eff[NUM_REQ-1:0]),
+     .gnt(gnt[NUM_REQ-1:0])
+   );
+ 
+end
 endmodule
