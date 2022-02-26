@@ -12,8 +12,8 @@ endpackage
 module clz_clo 
 import clz_clo_pkg::*;
 (
-  input      [WI_SZ-1:0] in,
-  output reg [WO_SZ-1:0] out
+  input  logic [WI_SZ-1:0] in,
+  output logic [WO_SZ-1:0] out
 );
     
   generate
@@ -21,11 +21,11 @@ import clz_clo_pkg::*;
    if (`IMPL == "RECURSE") begin
 
     localparam TWO_BITS = 2;
-    reg [WO_SZ-1:0] lzc;
-    always @(*) out = lzc;
+    logic [WO_SZ-1:0] lzc;
+    always_comb out = lzc;
 
-    if (WI_SZ == TWO_BITS) begin: MUX_2BIT
-      always @(*) begin
+     if (WI_SZ == TWO_BITS) begin: MUX_2BIT
+      always_comb begin
         case (in)
          2'b00   : lzc = 2'b10;
          2'b01   : lzc = 2'b01;
@@ -45,11 +45,11 @@ import clz_clo_pkg::*;
   	 localparam RHS_START = LHS_END-1;
   	 localparam RHS_END   = 0;
      /* Module Output Wires */
-     wire [SPLIT_WO_SZ-1:0] lhs_lzc;
-     wire [SPLIT_WO_SZ-1:0] rhs_lzc;
+     logic [SPLIT_WO_SZ-1:0] lhs_lzc;
+     logic [SPLIT_WO_SZ-1:0] rhs_lzc;
      
      /* Recurse Left */
-     leading_zero_cnt #(
+     clz_clo #(
        .WI_SZ(SPLIT_WI_SZ),
        .WO_SZ(SPLIT_WO_SZ)
      ) LZC_LHS (
@@ -58,7 +58,7 @@ import clz_clo_pkg::*;
      );
      
      /* Recurse Right */
-     leading_zero_cnt #(
+     clz_clo #(
        .WI_SZ(SPLIT_WI_SZ),
        .WO_SZ(SPLIT_WO_SZ)
      ) LZC_RHS (
@@ -78,8 +78,8 @@ import clz_clo_pkg::*;
               lzc = lhs_lzc;
      */ 
      always @(*) begin: MUX_DECODE
-       reg lhs_msb, rhs_msb;
-       reg [SPLIT_WO_SZ-2:0] rhs_no_msb;
+       logic lhs_msb, rhs_msb;
+       logic [SPLIT_WO_SZ-2:0] rhs_no_msb;
        lhs_msb    = lhs_lzc[SPLIT_WO_SZ-1];
        rhs_msb    = rhs_lzc[SPLIT_WO_SZ-1];
        rhs_no_msb = rhs_lzc[SPLIT_WO_SZ-2:0];
