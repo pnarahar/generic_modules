@@ -43,6 +43,10 @@ always(@posedge clk or negedge rst_b)
          issue_mul<=1'b0;
    end else begin
          cdb_slot<={1'b0,cdb_slot[MAX_LAT-1:1]};  //Right shift for tracking passage of time
+         issue_ls<=1'b0;
+         issue_int<=1'b0;
+         issue_div<=1'b0;
+         issue_mul<=1'b0;
       //Single Cycle reservation   
          if(~cdb_slot[0]) begin
             //Check for LS or integer requests
