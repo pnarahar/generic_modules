@@ -83,7 +83,8 @@ always@(posedge clk or negedge rst_b)  begin
              rd_ptr            <=rd_ptr+1;
              complete[rd_ptr]  <= 1'b0; 
          end
-         if(dis_inst_valid & (~full | (full & commit))) begin
+         if(dis_inst_valid & (~full | (full & rob_commit))) begin
+             wr_ptr         <= wr_ptr+1;
              reg_wr[wr_ptr] <= dis_reg_write;
              mem_wr[wr_ptr] <= dis_inst_sw;
              complete[wr_ptr] <= '0;
