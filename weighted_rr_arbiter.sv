@@ -61,7 +61,8 @@ always_ff(@posedge clk or negedge rst_b) begin
             if(gnt[i])
                weights[i] <= weights[i]-1;
             else if (gnt_zero & weights_zero)
-               weights[i] <= weights[i]+1;
+            //Reset back to initial weights
+               weights[i] <= INIT_WEIGHT;
      end
 end
 
