@@ -86,7 +86,7 @@ always(@posedge clk or negedge rst_b)
          end else if(max_lat_arith_op & second_max_lat_arith_op) begin
                issue_mul<=lru_mul_div;
                issue_div<=~lru_mul_div;
-               lru<=~lru_mul_div;
+               lru_mul_div<=~lru_mul_div;
          end
      end
    end

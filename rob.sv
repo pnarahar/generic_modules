@@ -89,7 +89,7 @@ always@(posedge clk or negedge rst_b)  begin
              mem_wr[wr_ptr] <= dis_inst_sw;
              complete[wr_ptr] <= '0;
              if (~dis_inst_sw) begin
-                   rd_addr[wr_ptr]       <= dis_rob_rd_addr;
+                   rd_addr[wr_ptr]       <= dis_rob_rdaddr;
                    prev_phy_addr[wr_ptr] <= dis_prev_phy_addr;
                    curr_phy_addr[wr_ptr] <= dis_new_phy_addr;   
 	     end else begin	
@@ -97,11 +97,11 @@ always@(posedge clk or negedge rst_b)  begin
              end	
          end
          if(cdb_val) begin
-             complete[cdb_rob_tag] <= 1'b1;
-             if(mem_wr[cdb_rob_tag]) begin
-                  sw_addr      [cdb_rob_tag] <= cdb_sw_addr[20:0];
-                  prev_phy_addr[cdb_rob_tag] <= cdb_sw_addr[26:21];
-                  rd_addr      [cdb_rob_tag] <= cdb_sw_addr[31:27];       
+             complete[cdb_robtag] <= 1'b1;
+             if(mem_wr[cdb_robtag]) begin
+                  sw_addr      [cdb_robtag] <= cdb_swaddr[20:0];
+                  prev_phy_addr[cdb_robtag] <= cdb_swaddr[26:21];
+                  rd_addr      [cdb_robtag] <= cdb_swaddr[31:27];       
              end
          end
          if(cdb_flush) begin

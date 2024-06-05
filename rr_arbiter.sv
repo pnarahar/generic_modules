@@ -24,6 +24,7 @@ module rr_arbiter
      parameter IMPL_TYPE = 1)
   (    
       input  logic [NUM_REQ-1:0] req,
+      input  logic [NUM_REQ-1:0] hold,
       output logic [NUM_REQ-1:0] gnt,
       input  logic               clk,
       input  logic               rst_b 
@@ -116,8 +117,8 @@ end else begin
 //pri for gnt[0] is set if there was a grant for gnt[NUM_REQ-1] or if there was no grant in current cycle hold the priorities 
               assign tmp_i = i[NUM_REQ-1:0];
               always_ff(posedge clk or negedge rst_n)
-              if(!rst_n)     pri[i]       <= '1;
-              else           pri[i]       <= gnt[tmp_i-1]  | (gnt_zero & pri[i]);    
+              if(!rst_n)     pri[i] <= '1;
+              else           pri[i] <= gnt[tmp_i-1]  | (gnt_zero & pri[i]);
    end
 
    assign pri_req = pri & req ;
@@ -134,8 +135,26 @@ end else begin
    ) fixed_prioritizer_u
    (
      .req(req_eff[NUM_REQ-1:0]),
-     .gnt(gnt[NUM_REQ-1:0])
+     .gnt(gnt_int[NUM_REQ-1:0])
    );
+
+ //There are situations when a particular requestor need to continue to get access to the bus. This may be due to Qos requirements or a narrow width which would need multiple cycles for a transaction to go across.
+ //Then a hold signal is introduced to keep the current grant active until the hold can be released.
+ //Memorize the current grant in a register called grant_last.
+ logic [NUM_REQ-1:0] gnt_int,gnt_o,gnt_last;
+ logic any_hold;
+ always_ff(@posedge clk or negedge rst_n) begin
+   if(!rst_n)
+     gnt_last <= '0;
+   else if(|gnt)
+     gnt_last <= gnt;
+ end
  
+ //gnt_last is one hot vector
+ assign any_hold = |(gnt_last & hold);
+ assign gnt      = gnt_o | (gnt_last & hold);
+ //Negates the internally calculated current arbitration if there is a hold condition from any requestors.
+ assign gnt_o    = gnt_int & !any_hold;
+
 end
 endmodule

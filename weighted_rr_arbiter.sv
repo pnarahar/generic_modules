@@ -60,7 +60,7 @@ always_ff(@posedge clk or negedge rst_b) begin
           for(int i=0 ; i<NUM_REQ ; i++)
             if(gnt[i])
                weights[i] <= weights[i]-1;
-            else if (gnt_zero & weights_zero)
+            else if (weights_zero)
             //Reset back to initial weights
                weights[i] <= INIT_WEIGHT;
      end
